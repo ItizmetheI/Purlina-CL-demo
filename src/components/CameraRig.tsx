@@ -4,6 +4,8 @@ import { useRef } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { scrollState } from "@/lib/scrollState";
+import { productRevealAmount } from "./ShatterField";
+import { LIPSTICK_ENVELOPE, SPRAY_ENVELOPE } from "@/lib/shatterTimeline";
 
 // Gentle camera dolly per section — the liquid form itself carries most of
 // the motion, so the camera only needs a subtle drift to add depth.
@@ -42,12 +44,20 @@ export default function CameraRig() {
     const t = span > 0 ? THREE.MathUtils.clamp((progress - k0.progress) / span, 0, 1) : 0;
     const eased = t * t * (3 - 2 * t);
 
+    // Punch in close on the product the moment it fully reforms — a
+    // dramatic dolly-zoom that makes each reveal feel like a hero shot
+    // rather than a small object drifting past.
+    const focus = Math.max(
+      productRevealAmount(LIPSTICK_ENVELOPE, progress),
+      productRevealAmount(SPRAY_ENVELOPE, progress),
+    );
+
     targetPos.current.set(
       THREE.MathUtils.lerp(k0.pos[0], k1.pos[0], eased) + mouse.x * 0.2,
       THREE.MathUtils.lerp(k0.pos[1], k1.pos[1], eased) + -mouse.y * 0.15,
-      THREE.MathUtils.lerp(k0.pos[2], k1.pos[2], eased),
+      THREE.MathUtils.lerp(k0.pos[2], k1.pos[2], eased) - focus * 1.0,
     );
-    targetFov.current = THREE.MathUtils.lerp(k0.fov, k1.fov, eased);
+    targetFov.current = THREE.MathUtils.lerp(k0.fov, k1.fov, eased) - focus * 4;
 
     const lerpFactor = 1 - Math.pow(0.0008, delta);
     camera.position.lerp(targetPos.current, lerpFactor);

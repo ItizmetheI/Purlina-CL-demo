@@ -73,6 +73,15 @@ export default function LiquidForm() {
   useFrame((state, rawDelta) => {
     uniforms.uTime.value = state.clock.elapsedTime;
 
+    // Slow shimmer: gently animate the iridescent film thickness so the
+    // chrome's color highlights drift over time, reading as a liquid sheen
+    // without disturbing the surface texture or geometry.
+    const physMat = material as THREE.MeshPhysicalMaterial;
+    physMat.iridescenceThicknessRange = [
+      100 + Math.sin(state.clock.elapsedTime * 0.25) * 60,
+      400 + Math.cos(state.clock.elapsedTime * 0.18) * 100,
+    ];
+
     sampleFormKeyframes(scrollState.progress, target.current);
     sampleMorphInfluences(scrollState.progress, targetInfluences.current);
 
@@ -137,6 +146,7 @@ export default function LiquidForm() {
       ribbonOpacity,
       lerpFactor,
     );
+
   });
 
   return (

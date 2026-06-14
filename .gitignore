@@ -44,3 +44,6 @@ next-env.d.ts
 /amerisleep-fixed-llm-main
 /purlina
 /.claude
+
+# local MCP config (contains API keys)
+/.mcp.json
