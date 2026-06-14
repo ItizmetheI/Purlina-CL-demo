@@ -120,11 +120,15 @@ export default function LiquidForm() {
       morphDelta += Math.abs(targetInfluences.current[i] - prevInfluences.current[i]);
       prevInfluences.current[i] = targetInfluences.current[i];
     }
-    const morphBoost = Math.min(morphDelta * 3, 0.07);
+    const morphBoost = Math.min(morphDelta * 3, 0.12);
+
+    // Continuous rolling "breathe" so the surface never sits fully still,
+    // even between morph beats — reads as liquid metal in motion.
+    const breathe = (Math.sin(state.clock.elapsedTime * 0.4) * 0.5 + 0.5) * 0.025;
 
     uniforms.uAmplitude.value = THREE.MathUtils.lerp(
       uniforms.uAmplitude.value,
-      target.current.noise + morphBoost,
+      target.current.noise + morphBoost + breathe,
       lerpFactor,
     );
 

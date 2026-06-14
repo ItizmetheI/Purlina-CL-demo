@@ -84,16 +84,16 @@ export function createChromeMaterial() {
   roughnessMap?.repeat.set(1, 1);
 
   const material = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color("#c4cdd6"),
+    color: new THREE.Color("#d4dde8"),
     metalness: 1,
-    roughness: 0.78,
+    roughness: 0.55,
     roughnessMap: roughnessMap ?? undefined,
-    clearcoat: 0.5,
-    clearcoatRoughness: 0.3,
-    envMapIntensity: 1.6,
-    iridescence: 0.35,
-    iridescenceIOR: 1.25,
-    iridescenceThicknessRange: [100, 400],
+    clearcoat: 0.8,
+    clearcoatRoughness: 0.15,
+    envMapIntensity: 1.8,
+    iridescence: 0.6,
+    iridescenceIOR: 1.4,
+    iridescenceThicknessRange: [80, 500],
     transparent: true,
   });
 
@@ -115,8 +115,8 @@ export function createChromeMaterial() {
     shader.vertexShader = shader.vertexShader.replace(
       "#include <morphtarget_vertex>",
       `#include <morphtarget_vertex>
-      float n = snoise(transformed * 0.9 + vec3(0.0, 0.0, uTime * 0.12));
-      float n2 = snoise(transformed * 2.1 - vec3(uTime * 0.09, uTime * 0.07, 0.0));
+      float n = snoise(transformed * 0.9 + vec3(0.0, 0.0, uTime * 0.35));
+      float n2 = snoise(transformed * 2.1 - vec3(uTime * 0.28, uTime * 0.22, 0.0));
       float displacement = (n * 0.7 + n2 * 0.3) * uAmplitude;
 
       transformed += normalize(objectNormal) * displacement;

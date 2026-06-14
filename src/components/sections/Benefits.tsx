@@ -3,52 +3,41 @@
 import Reveal from "@/components/Reveal";
 
 const BENEFITS = [
-  {
-    title: "Yeni regülasyon değişikliğine adaptasyon",
-    description: "Değişen mevzuata anında uyum sağlayan esnek yapı.",
-  },
-  {
-    title: "Kolaylık",
-    description: "Mevcut sistemlere ek altyapı gerektirmeden entegre olur.",
-  },
-  {
-    title: "Maliyet",
-    description: "Düşük işletme maliyetiyle yüksek toplama verimi.",
-  },
-  {
-    title: "Hız",
-    description: "Anında reaksiyon, anında kirletici toplama performansı.",
-  },
+  { n: "01", title: "Adaptasyon", desc: "Değişen mevzuata anında uyum sağlayan esnek yapı." },
+  { n: "02", title: "Kolaylık", desc: "Mevcut sistemlere ek altyapı gerektirmeden entegre olur." },
+  { n: "03", title: "Maliyet", desc: "Düşük işletme maliyetiyle yüksek toplama verimi." },
+  { n: "04", title: "Hız", desc: "Anında reaksiyon, anında kirletici toplama performansı." },
 ];
 
 export default function Benefits() {
   return (
     <section
       id="benefits"
-      className="relative flex min-h-screen flex-col px-6 pb-24 pt-32 sm:px-12 sm:pt-36 lg:px-20"
+      className="relative flex min-h-screen flex-col justify-center px-6 sm:px-12 lg:px-20"
     >
       <Reveal>
-        <p className="mb-3 font-display text-xs font-medium uppercase tracking-[0.5em] text-accent">
+        <p className="mb-4 font-display text-[10px] font-medium uppercase tracking-[0.6em] text-accent">
           Faydalar
         </p>
-        <h2 className="max-w-2xl font-display text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-          Tek yapı, dört temel kazanım.
+      </Reveal>
+
+      <Reveal delay={100}>
+        <h2 className="font-display text-[clamp(2.5rem,6vw,5.5rem)] font-semibold leading-[1] tracking-[-0.02em] text-foreground">
+          Tek yapı,
+          <br />
+          <span className="text-foreground/40">dört temel</span>
+          <br />
+          kazanım.
         </h2>
       </Reveal>
 
-      <div className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-2">
+      <div className="mt-16 grid max-w-2xl grid-cols-1 gap-0 sm:grid-cols-2">
         {BENEFITS.map((b, i) => (
-          <Reveal key={b.title} delay={i * 100}>
-            <div className="group h-full bg-surface/90 p-7 backdrop-blur-sm transition-colors hover:bg-white sm:p-9">
-              <span className="font-display text-sm text-muted-2">
-                0{i + 1}
-              </span>
-              <h3 className="mt-4 font-display text-xl font-semibold text-foreground sm:text-2xl">
-                {b.title}
-              </h3>
-              <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted sm:text-base">
-                {b.description}
-              </p>
+          <Reveal key={b.n} delay={i * 80}>
+            <div className="border-t border-foreground/8 py-8 pr-12">
+              <span className="font-display text-xs text-muted-2">{b.n}</span>
+              <h3 className="mt-3 font-display text-xl font-semibold text-foreground">{b.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{b.desc}</p>
             </div>
           </Reveal>
         ))}

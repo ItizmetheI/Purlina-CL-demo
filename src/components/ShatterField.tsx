@@ -93,7 +93,7 @@ export default function ShatterField({ metalPoints, product, productScale, envel
     }
 
     const mat = new THREE.PointsMaterial({
-      size: 0.05,
+      size: 0.065,
       sizeAttenuation: true,
       vertexColors: true,
       transparent: true,
@@ -127,12 +127,21 @@ export default function ShatterField({ metalPoints, product, productScale, envel
     const posArr = positions.array as Float32Array;
     const colArr = colors.array as Float32Array;
 
-    const explodeMag = 0.7;
+    // Violent burst: fragments fly far past their reform point and tumble
+    // through a spiral arc on the way, instead of drifting in a straight
+    // line — reads as a real shatter/blast rather than a soft dissolve.
+    const explodeMag = 2.6;
 
     for (let i = 0; i < count; i++) {
       const seed = seeds[i];
-      const tp = smoothstep(THREE.MathUtils.clamp(t * 1.35 - seed * 0.35, 0, 1));
-      const bump = Math.sin(THREE.MathUtils.clamp(t * 1.35 - seed * 0.35, 0, 1) * Math.PI) * explodeMag;
+      const local = THREE.MathUtils.clamp(t * 1.35 - seed * 0.35, 0, 1);
+      const tp = smoothstep(local);
+      // Sharp outward spike that overshoots then snaps back, scaled per-particle.
+      const burst = Math.pow(Math.sin(local * Math.PI), 0.6) * explodeMag * (0.5 + seed);
+      // Per-particle tumble: a spiral offset around the explosion axis that
+      // spins fastest mid-flight and settles as the fragment arrives.
+      const spin = local * Math.PI * (4 + seed * 6);
+      const tumble = Math.sin(local * Math.PI) * (0.4 + seed * 0.5);
 
       const mx = metalPoints[i * 3];
       const my = metalPoints[i * 3 + 1];
@@ -141,9 +150,18 @@ export default function ShatterField({ metalPoints, product, productScale, envel
       const py = productPoints[i * 3 + 1] * productScale;
       const pz = productPoints[i * 3 + 2] * productScale;
 
-      posArr[i * 3] = THREE.MathUtils.lerp(mx, px, tp) + explodeDir[i * 3] * bump;
-      posArr[i * 3 + 1] = THREE.MathUtils.lerp(my, py, tp) + explodeDir[i * 3 + 1] * bump;
-      posArr[i * 3 + 2] = THREE.MathUtils.lerp(mz, pz, tp) + explodeDir[i * 3 + 2] * bump;
+      const ex = explodeDir[i * 3];
+      const ey = explodeDir[i * 3 + 1];
+      const ez = explodeDir[i * 3 + 2];
+
+      // Tumble axis perpendicular to the explosion direction.
+      const tx = -ey;
+      const ty = ex;
+      const tz = ez;
+
+      posArr[i * 3] = THREE.MathUtils.lerp(mx, px, tp) + ex * burst + Math.cos(spin) * tx * tumble;
+      posArr[i * 3 + 1] = THREE.MathUtils.lerp(my, py, tp) + ey * burst + Math.sin(spin) * ty * tumble;
+      posArr[i * 3 + 2] = THREE.MathUtils.lerp(mz, pz, tp) + ez * burst + Math.sin(spin * 0.7) * tz * tumble;
 
       colArr[i * 3] = THREE.MathUtils.lerp(metalCol.r, productCol.r, tp);
       colArr[i * 3 + 1] = THREE.MathUtils.lerp(metalCol.g, productCol.g, tp);
