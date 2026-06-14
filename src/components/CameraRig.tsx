@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { scrollState } from "@/lib/scrollState";
@@ -30,6 +31,20 @@ export default function CameraRig() {
   const { camera } = useThree();
   const targetPos = useRef(new THREE.Vector3(0, 0, 6.2));
   const targetFov = useRef(32);
+  const introRef = useRef(false);
+
+  // Cinematic open: camera starts close and pulls back to reveal the scene.
+  useEffect(() => {
+    if (introRef.current) return;
+    introRef.current = true;
+    camera.position.z = 3.5;
+    gsap.to(camera.position, {
+      z: 6.2,
+      duration: 3.0,
+      delay: 0.2,
+      ease: "power2.out",
+    });
+  }, [camera]);
 
   useFrame((_, rawDelta) => {
     const delta = Math.min(rawDelta, 1 / 30);

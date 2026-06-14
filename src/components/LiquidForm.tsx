@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
+import gsap from "gsap";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { createChromeMaterial } from "@/lib/chromeMaterial";
@@ -44,6 +45,7 @@ export default function LiquidForm() {
   // that reads as jitter.
   const basePosition = useRef(new THREE.Vector3());
   const baseRotationY = useRef(0);
+  const introScaleDone = useRef(false);
 
   useEffect(() => {
     sampleFormKeyframes(0, target.current);
@@ -53,9 +55,24 @@ export default function LiquidForm() {
     if (g) {
       g.position.copy(target.current.position);
       g.rotation.copy(target.current.rotation);
-      g.scale.setScalar(target.current.scale);
       basePosition.current.copy(target.current.position);
       baseRotationY.current = target.current.rotation.y;
+
+      // Cinematic open: the form rushes in from nothing rather than
+      // appearing fully-formed.
+      const targetScale = target.current.scale;
+      g.scale.setScalar(0);
+      gsap.to(g.scale, {
+        x: targetScale,
+        y: targetScale,
+        z: targetScale,
+        duration: 2.5,
+        delay: 0.3,
+        ease: "power3.out",
+        onComplete: () => {
+          introScaleDone.current = true;
+        },
+      });
     }
 
     const m = mesh.current;
@@ -109,8 +126,10 @@ export default function LiquidForm() {
     g.position.copy(basePosition.current);
     g.position.y += Math.sin(state.clock.elapsedTime * 0.5) * 0.035;
 
-    const nextScale = THREE.MathUtils.lerp(g.scale.x, target.current.scale, lerpFactor);
-    g.scale.setScalar(nextScale);
+    if (introScaleDone.current) {
+      const nextScale = THREE.MathUtils.lerp(g.scale.x, target.current.scale, lerpFactor);
+      g.scale.setScalar(nextScale);
+    }
 
     // Liquid surge: while the morph-target weights are actively changing,
     // boost the displacement amplitude so the surface visibly ripples as it

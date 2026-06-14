@@ -93,7 +93,7 @@ export default function ShatterField({ metalPoints, product, productScale, envel
     }
 
     const mat = new THREE.PointsMaterial({
-      size: 0.065,
+      size: 0.08,
       sizeAttenuation: true,
       vertexColors: true,
       transparent: true,

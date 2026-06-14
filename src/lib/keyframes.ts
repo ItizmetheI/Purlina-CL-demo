@@ -21,11 +21,11 @@ export interface FormKeyframe {
 // 5. CTA             — spiral fully extended, settles low and center; shatters
 //                       once more into the final product reveal
 export const FORM_KEYFRAMES: FormKeyframe[] = [
-  { progress: 0.0, position: [1.5, 0.7, 0], rotation: [0.15, -0.5, 0.05], scale: 0.46, shape: 0, noise: 0.045, radiusA: 1.0, radiusB: 0.42 },
-  { progress: 0.32, position: [1.0, -0.5, -0.3], rotation: [0.35, 0.6, -0.08], scale: 0.42, shape: 0.5, noise: 0.06, radiusA: 1.02, radiusB: 0.44 },
-  { progress: 0.5, position: [-0.1, 0.25, 0.5], rotation: [0.15, 1.8, 0.05], scale: 0.62, shape: 1, noise: 0.09, radiusA: 1.05, radiusB: 0.46 },
-  { progress: 0.7, position: [0.6, 0.1, -0.6], rotation: [0.05, 3.0, 0], scale: 0.42, shape: 2, noise: 0.1, radiusA: 0.92, radiusB: 0.38 },
-  { progress: 1.0, position: [-0.1, 0.55, -1.0], rotation: [0.0, 4.4, 0], scale: 0.36, shape: 3, noise: 0.06, radiusA: 0.85, radiusB: 0.34 },
+  { progress: 0.0, position: [0.8, 0.2, 0], rotation: [0.15, -0.5, 0.05], scale: 0.72, shape: 0, noise: 0.045, radiusA: 1.0, radiusB: 0.42 },
+  { progress: 0.32, position: [0.6, -0.2, -0.3], rotation: [0.35, 0.6, -0.08], scale: 0.58, shape: 0.5, noise: 0.06, radiusA: 1.02, radiusB: 0.44 },
+  { progress: 0.5, position: [0.2, 0.1, 0.5], rotation: [0.15, 1.8, 0.05], scale: 0.8, shape: 1, noise: 0.09, radiusA: 1.05, radiusB: 0.46 },
+  { progress: 0.7, position: [0.2, 0.0, -0.4], rotation: [0.05, 3.0, 0], scale: 0.55, shape: 2, noise: 0.1, radiusA: 0.92, radiusB: 0.38 },
+  { progress: 1.0, position: [0.0, 0.0, -0.8], rotation: [0.0, 4.4, 0], scale: 0.42, shape: 3, noise: 0.06, radiusA: 0.85, radiusB: 0.34 },
 ];
 
 const _a = new THREE.Vector3();
