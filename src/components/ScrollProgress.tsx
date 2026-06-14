@@ -56,7 +56,7 @@ export default function ScrollProgress() {
   return (
     <div className="pointer-events-none fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 lg:flex lg:right-10">
       <div className="relative flex flex-col items-center gap-6 py-2">
-        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-border" />
+        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-foreground/8" />
         <div
           ref={fillRef}
           className="absolute left-1/2 top-0 w-px -translate-x-1/2 bg-accent transition-[height] duration-150 ease-out"
@@ -71,7 +71,7 @@ export default function ScrollProgress() {
             onClick={() => handleClick(c.progress)}
             aria-label={c.label}
             data-active="false"
-            className="pointer-events-auto group relative z-10 flex h-3 w-3 items-center justify-center rounded-full border border-border bg-background transition-colors data-[active=true]:border-accent data-[active=true]:bg-accent"
+            className="pointer-events-auto group relative z-10 flex h-3 w-3 items-center justify-center rounded-full border border-foreground/15 bg-background transition-colors data-[active=true]:border-accent data-[active=true]:bg-accent data-[active=true]:shadow-[0_0_8px_2px_rgba(14,163,116,0.4)]"
           >
             <span className="pointer-events-none absolute right-5 whitespace-nowrap rounded-full bg-surface px-2 py-1 font-display text-[0.6rem] uppercase tracking-[0.3em] text-muted opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
               {c.label}

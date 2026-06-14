@@ -9,15 +9,19 @@ export default function Cta() {
       className="relative flex min-h-screen flex-col items-center justify-center px-6 py-24 text-center sm:px-12"
     >
       <Reveal className="flex w-full flex-col items-center">
-        <p className="mb-3 font-display text-xs font-medium uppercase tracking-[0.5em] text-accent">
+        <p className="mb-4 font-display text-[10px] font-medium uppercase tracking-[0.6em] text-accent">
           Hemen Başlayın
         </p>
-        <h2 className="max-w-2xl font-display text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-6xl">
-          Sektörünüz için Purlina Matrix&apos;i keşfedin
+        <h2 className="max-w-3xl font-display text-[clamp(2.5rem,5vw,5rem)] font-semibold leading-[1.05] tracking-[-0.02em] text-foreground">
+          Sektörünüz için
+          <br />
+          <span className="text-foreground/40">Purlina Matrix&apos;i</span>
+          <br />
+          keşfedin
         </h2>
 
         <form
-          className="mt-10 flex w-full max-w-xl items-center gap-2 rounded-full border border-border bg-surface p-2 pl-6 shadow-[0_20px_60px_-30px_rgba(16,20,28,0.35)] transition-colors focus-within:border-accent/50"
+          className="mt-12 flex w-full max-w-lg items-center gap-2 rounded-full border border-foreground/10 bg-foreground/[0.04] p-2 pl-6 backdrop-blur-sm transition-colors focus-within:border-accent/40"
           onSubmit={(e) => e.preventDefault()}
         >
           <input
@@ -28,7 +32,7 @@ export default function Cta() {
           <button
             type="submit"
             aria-label="Oluştur"
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent-warm text-white transition-transform hover:scale-105 active:scale-95"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-white transition-transform hover:scale-105 active:scale-95"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +42,7 @@ export default function Cta() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="h-5 w-5"
+              className="h-4 w-4"
             >
               <circle cx="11" cy="11" r="7" />
               <path d="m21 21-4.3-4.3" />
@@ -46,9 +50,13 @@ export default function Cta() {
           </button>
         </form>
 
-        <p className="mt-16 font-display text-xs uppercase tracking-[0.4em] text-muted-2">
-          © Purlina — Yeni Nesil Toplama Teknolojisi
-        </p>
+        <div className="mt-20 flex items-center gap-6">
+          <div className="h-px w-16 bg-foreground/10" />
+          <p className="font-display text-[9px] uppercase tracking-[0.5em] text-muted-2">
+            © Purlina — Yeni Nesil Toplama Teknolojisi
+          </p>
+          <div className="h-px w-16 bg-foreground/10" />
+        </div>
       </Reveal>
     </section>
   );

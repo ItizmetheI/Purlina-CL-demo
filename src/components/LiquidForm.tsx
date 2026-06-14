@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
+import gsap from "gsap";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { createChromeMaterial } from "@/lib/chromeMaterial";
@@ -44,6 +45,7 @@ export default function LiquidForm() {
   // that reads as jitter.
   const basePosition = useRef(new THREE.Vector3());
   const baseRotationY = useRef(0);
+  const introScaleDone = useRef(false);
 
   useEffect(() => {
     sampleFormKeyframes(0, target.current);
@@ -53,9 +55,24 @@ export default function LiquidForm() {
     if (g) {
       g.position.copy(target.current.position);
       g.rotation.copy(target.current.rotation);
-      g.scale.setScalar(target.current.scale);
       basePosition.current.copy(target.current.position);
       baseRotationY.current = target.current.rotation.y;
+
+      // Cinematic open: the form rushes in from nothing rather than
+      // appearing fully-formed.
+      const targetScale = target.current.scale;
+      g.scale.setScalar(0);
+      gsap.to(g.scale, {
+        x: targetScale,
+        y: targetScale,
+        z: targetScale,
+        duration: 2.5,
+        delay: 0.3,
+        ease: "power3.out",
+        onComplete: () => {
+          introScaleDone.current = true;
+        },
+      });
     }
 
     const m = mesh.current;
@@ -72,6 +89,15 @@ export default function LiquidForm() {
 
   useFrame((state, rawDelta) => {
     uniforms.uTime.value = state.clock.elapsedTime;
+
+    // Slow shimmer: gently animate the iridescent film thickness so the
+    // chrome's color highlights drift over time, reading as a liquid sheen
+    // without disturbing the surface texture or geometry.
+    const physMat = material as THREE.MeshPhysicalMaterial;
+    physMat.iridescenceThicknessRange = [
+      100 + Math.sin(state.clock.elapsedTime * 0.25) * 60,
+      400 + Math.cos(state.clock.elapsedTime * 0.18) * 100,
+    ];
 
     sampleFormKeyframes(scrollState.progress, target.current);
     sampleMorphInfluences(scrollState.progress, targetInfluences.current);
@@ -100,8 +126,10 @@ export default function LiquidForm() {
     g.position.copy(basePosition.current);
     g.position.y += Math.sin(state.clock.elapsedTime * 0.5) * 0.035;
 
-    const nextScale = THREE.MathUtils.lerp(g.scale.x, target.current.scale, lerpFactor);
-    g.scale.setScalar(nextScale);
+    if (introScaleDone.current) {
+      const nextScale = THREE.MathUtils.lerp(g.scale.x, target.current.scale, lerpFactor);
+      g.scale.setScalar(nextScale);
+    }
 
     // Liquid surge: while the morph-target weights are actively changing,
     // boost the displacement amplitude so the surface visibly ripples as it
@@ -111,11 +139,15 @@ export default function LiquidForm() {
       morphDelta += Math.abs(targetInfluences.current[i] - prevInfluences.current[i]);
       prevInfluences.current[i] = targetInfluences.current[i];
     }
-    const morphBoost = Math.min(morphDelta * 3, 0.07);
+    const morphBoost = Math.min(morphDelta * 3, 0.12);
+
+    // Continuous rolling "breathe" so the surface never sits fully still,
+    // even between morph beats — reads as liquid metal in motion.
+    const breathe = (Math.sin(state.clock.elapsedTime * 0.4) * 0.5 + 0.5) * 0.025;
 
     uniforms.uAmplitude.value = THREE.MathUtils.lerp(
       uniforms.uAmplitude.value,
-      target.current.noise + morphBoost,
+      target.current.noise + morphBoost + breathe,
       lerpFactor,
     );
 
@@ -137,6 +169,7 @@ export default function LiquidForm() {
       ribbonOpacity,
       lerpFactor,
     );
+
   });
 
   return (

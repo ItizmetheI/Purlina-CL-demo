@@ -23,12 +23,13 @@ function createMarbleTexture(size = 512): THREE.CanvasTexture | null {
   ctx.fillStyle = "#9aa1ad";
   ctx.fillRect(0, 0, size, size);
 
-  // Long, low streaks — the marbled "veins".
-  for (let i = 0; i < 14; i++) {
+  // Long, low streaks — the marbled "veins". Kept subtle and sparse so the
+  // surface reads as polished metal with gentle variation, not a busy print.
+  for (let i = 0; i < 6; i++) {
     const x = Math.random() * size;
     const y = Math.random() * size;
     const len = size * (0.6 + Math.random() * 0.9);
-    const thickness = size * (0.04 + Math.random() * 0.1);
+    const thickness = size * (0.08 + Math.random() * 0.14);
     const angle = Math.random() * Math.PI;
     const dark = Math.random() > 0.4;
 
@@ -38,7 +39,7 @@ function createMarbleTexture(size = 512): THREE.CanvasTexture | null {
     const grad = ctx.createLinearGradient(-len / 2, 0, len / 2, 0);
     const c = dark ? "10,12,16" : "255,255,255";
     grad.addColorStop(0, `rgba(${c},0)`);
-    grad.addColorStop(0.5, `rgba(${c},${dark ? 0.6 : 0.7})`);
+    grad.addColorStop(0.5, `rgba(${c},${dark ? 0.22 : 0.25})`);
     grad.addColorStop(1, `rgba(${c},0)`);
     ctx.fillStyle = grad;
     ctx.fillRect(-len / 2, -thickness / 2, len, thickness);
@@ -46,13 +47,13 @@ function createMarbleTexture(size = 512): THREE.CanvasTexture | null {
   }
 
   // Soft round blobs for broader variation.
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 8; i++) {
     const x = Math.random() * size;
     const y = Math.random() * size;
-    const r = (0.06 + Math.random() * 0.22) * size;
+    const r = (0.1 + Math.random() * 0.25) * size;
     const dark = Math.random() > 0.5;
     const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-    grad.addColorStop(0, dark ? "rgba(8,9,12,0.5)" : "rgba(255,255,255,0.55)");
+    grad.addColorStop(0, dark ? "rgba(8,9,12,0.18)" : "rgba(255,255,255,0.2)");
     grad.addColorStop(1, "rgba(154,161,173,0)");
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -80,19 +81,19 @@ export function createChromeMaterial() {
   };
 
   const roughnessMap = createMarbleTexture();
-  roughnessMap?.repeat.set(3, 1);
+  roughnessMap?.repeat.set(1, 1);
 
   const material = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color("#c4cdd6"),
+    color: new THREE.Color("#d4dde8"),
     metalness: 1,
-    roughness: 0.78,
+    roughness: 0.55,
     roughnessMap: roughnessMap ?? undefined,
-    clearcoat: 0.5,
-    clearcoatRoughness: 0.3,
-    envMapIntensity: 1.6,
-    iridescence: 0.35,
-    iridescenceIOR: 1.25,
-    iridescenceThicknessRange: [100, 400],
+    clearcoat: 0.8,
+    clearcoatRoughness: 0.15,
+    envMapIntensity: 1.8,
+    iridescence: 0.6,
+    iridescenceIOR: 1.4,
+    iridescenceThicknessRange: [80, 500],
     transparent: true,
   });
 
@@ -114,9 +115,10 @@ export function createChromeMaterial() {
     shader.vertexShader = shader.vertexShader.replace(
       "#include <morphtarget_vertex>",
       `#include <morphtarget_vertex>
-      float n = snoise(transformed * 0.9 + vec3(0.0, 0.0, uTime * 0.12));
-      float n2 = snoise(transformed * 2.1 - vec3(uTime * 0.09, uTime * 0.07, 0.0));
+      float n = snoise(transformed * 0.9 + vec3(0.0, 0.0, uTime * 0.35));
+      float n2 = snoise(transformed * 2.1 - vec3(uTime * 0.28, uTime * 0.22, 0.0));
       float displacement = (n * 0.7 + n2 * 0.3) * uAmplitude;
+
       transformed += normalize(objectNormal) * displacement;
       `,
     );

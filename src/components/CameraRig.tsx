@@ -1,9 +1,12 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { scrollState } from "@/lib/scrollState";
+import { productRevealAmount } from "./ShatterField";
+import { LIPSTICK_ENVELOPE, SPRAY_ENVELOPE } from "@/lib/shatterTimeline";
 
 // Gentle camera dolly per section — the liquid form itself carries most of
 // the motion, so the camera only needs a subtle drift to add depth.
@@ -28,6 +31,20 @@ export default function CameraRig() {
   const { camera } = useThree();
   const targetPos = useRef(new THREE.Vector3(0, 0, 6.2));
   const targetFov = useRef(32);
+  const introRef = useRef(false);
+
+  // Cinematic open: camera starts close and pulls back to reveal the scene.
+  useEffect(() => {
+    if (introRef.current) return;
+    introRef.current = true;
+    camera.position.z = 3.5;
+    gsap.to(camera.position, {
+      z: 6.2,
+      duration: 3.0,
+      delay: 0.2,
+      ease: "power2.out",
+    });
+  }, [camera]);
 
   useFrame((_, rawDelta) => {
     const delta = Math.min(rawDelta, 1 / 30);
@@ -42,12 +59,20 @@ export default function CameraRig() {
     const t = span > 0 ? THREE.MathUtils.clamp((progress - k0.progress) / span, 0, 1) : 0;
     const eased = t * t * (3 - 2 * t);
 
+    // Punch in close on the product the moment it fully reforms — a
+    // dramatic dolly-zoom that makes each reveal feel like a hero shot
+    // rather than a small object drifting past.
+    const focus = Math.max(
+      productRevealAmount(LIPSTICK_ENVELOPE, progress),
+      productRevealAmount(SPRAY_ENVELOPE, progress),
+    );
+
     targetPos.current.set(
       THREE.MathUtils.lerp(k0.pos[0], k1.pos[0], eased) + mouse.x * 0.2,
       THREE.MathUtils.lerp(k0.pos[1], k1.pos[1], eased) + -mouse.y * 0.15,
-      THREE.MathUtils.lerp(k0.pos[2], k1.pos[2], eased),
+      THREE.MathUtils.lerp(k0.pos[2], k1.pos[2], eased) - focus * 1.0,
     );
-    targetFov.current = THREE.MathUtils.lerp(k0.fov, k1.fov, eased);
+    targetFov.current = THREE.MathUtils.lerp(k0.fov, k1.fov, eased) - focus * 4;
 
     const lerpFactor = 1 - Math.pow(0.0008, delta);
     camera.position.lerp(targetPos.current, lerpFactor);

@@ -35,10 +35,10 @@ export default function Reveal({
   return (
     <div
       ref={ref}
-      className={`transition-all duration-1000 ease-out will-change-transform ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      className={`transition-all duration-[900ms] will-change-transform ${
+        visible ? "opacity-100 translate-y-0 blur-none" : "opacity-0 translate-y-10 blur-[4px]"
       } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{ transitionDelay: `${delay}ms`, transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
     >
       {children}
     </div>
